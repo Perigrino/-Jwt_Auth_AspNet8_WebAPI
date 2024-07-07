@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jwt_Auth_AspNet8.API", "Jwt_Auth_AspNet8.API\Jwt_Auth_AspNet8.API.csproj", "{0563F107-EE1E-4922-A866-4950BEF0CD9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jwt_Auth_AspNet8.Application", "Jwt_Auth_AspNet8.Application\Jwt_Auth_AspNet8.Application.csproj", "{B8DBD011-F3FC-425B-AA5E-45CAE84D7CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jwt_Auth_AspNet8.Contracts", "Jwt_Auth_AspNet8.Contracts\Jwt_Auth_AspNet8.Contracts.csproj", "{BEB31904-A37A-4566-BB7C-D6F1EB8D9925}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0563F107-EE1E-4922-A866-4950BEF0CD9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0563F107-EE1E-4922-A866-4950BEF0CD9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0563F107-EE1E-4922-A866-4950BEF0CD9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0563F107-EE1E-4922-A866-4950BEF0CD9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8DBD011-F3FC-425B-AA5E-45CAE84D7CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8DBD011-F3FC-425B-AA5E-45CAE84D7CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8DBD011-F3FC-425B-AA5E-45CAE84D7CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8DBD011-F3FC-425B-AA5E-45CAE84D7CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEB31904-A37A-4566-BB7C-D6F1EB8D9925}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEB31904-A37A-4566-BB7C-D6F1EB8D9925}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEB31904-A37A-4566-BB7C-D6F1EB8D9925}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEB31904-A37A-4566-BB7C-D6F1EB8D9925}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
