@@ -1,8 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Jwt_Auth_AspNet8.Contracts.OtherObjects;
 using Jwt_Auth_AspNet8.Contracts.Requests;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Jwt_Auth_AspNet8.API.Controller
 {
@@ -75,8 +78,53 @@ namespace Jwt_Auth_AspNet8.API.Controller
 
             return Ok("User Created");
         }
-
         
+        // Route -> Register
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login ([FromBody] LoginRequest loginRequest)
+        {
+            var user = await _userManager.FindByNameAsync(loginRequest.UserName);
+            if (user is null)
+                return Unauthorized("Invalid Credentials");
+
+            var isPasswordCorrect = await _userManager.CheckPasswordAsync(user,loginRequest.Password);
+            if (!isPasswordCorrect)
+                return Unauthorized("Invalid Credentials");
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var authClaims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim("JWTD", Guid.NewGuid().ToString()),
+            };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var token = GenerateNewJsonWebToken(authClaims);
+            return Ok(token);
+        }
+
+        private object GenerateNewJsonWebToken(List<Claim> authClaims)
+        {
+            var authSercet = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"] ?? string.Empty));
+            var tokenObject = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddDays(1),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSercet, SecurityAlgorithms.HmacSha256)
+                );
+
+            string token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
+            return token;
+        }
+
+
         // GET: api/<AuthController>
         [HttpGet]
         public IEnumerable<string> Get()
