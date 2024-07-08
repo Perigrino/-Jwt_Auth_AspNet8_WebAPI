@@ -18,12 +18,9 @@ builder.Services.AddControllers().AddNewtonsoftJson(options => options.Serialize
 builder.Services.Configure<JsonOptions>(options => { options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
 
 builder.Services.AddAuthorization();
-//builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
 // Add Identity
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>()
@@ -55,29 +52,32 @@ builder.Services
     {
         options.SaveToken = true;
         options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidIssuer = builder.Configuration["JWT: ValidIssuer"],
             ValidAudience = builder.Configuration["JWT: ValidAudience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT: SecretKey"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
         };
     });
 
 
 // Configure the HTTP request pipeline.
 // Configure the HTTP request pipeline.
+
+var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.MapIdentityApi<IdentityUser>();
+//app.MapIdentityApi<IdentityUser>();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+app.UseEndpoints(endpoints => { endpoints.MapControllers();});
 
 app.Run();
