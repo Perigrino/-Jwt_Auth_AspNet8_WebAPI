@@ -41,8 +41,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     
 
 // Add Authentication and JwtBearer
-builder.Services
-    .AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,15 +55,14 @@ builder.Services
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidIssuer = builder.Configuration["JWT: ValidIssuer"],
-            ValidAudience = builder.Configuration["JWT: ValidAudience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JWT:SecretKey"] ?? throw new InvalidOperationException()))
         };
     });
 
-
-// Configure the HTTP request pipeline.
-// Configure the HTTP request pipeline.
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -77,6 +75,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints => { endpoints.MapControllers();});
 

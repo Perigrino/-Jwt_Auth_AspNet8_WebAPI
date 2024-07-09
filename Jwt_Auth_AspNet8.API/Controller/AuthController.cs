@@ -24,7 +24,7 @@ namespace Jwt_Auth_AspNet8.API.Controller
             _configuration = configuration;
         }
         
-        // Route For Sedding My Roles to DB
+        // Route For Seeding My Roles to DB
         [HttpPost]
         [Route("seed-roles")]
         public async Task<IActionResult> SeedRoles ()
@@ -95,66 +95,32 @@ namespace Jwt_Auth_AspNet8.API.Controller
             var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
+                new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim("JWTD", Guid.NewGuid().ToString()),
+                new Claim("JWTID", Guid.NewGuid().ToString()),
             };
 
             foreach (var userRole in userRoles)
             {
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
             }
-
             var token = GenerateNewJsonWebToken(authClaims);
             return Ok(token);
         }
 
-        private object GenerateNewJsonWebToken(List<Claim> authClaims)
+        private string GenerateNewJsonWebToken(List<Claim> authClaims)
         {
-            var authSercet = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"] ?? string.Empty));
+            var authSecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"] ?? throw new InvalidOperationException()));
             var tokenObject = new JwtSecurityToken(
-                issuer: _configuration["JWT:ValidIssuer"],
-                audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1),
+                issuer: _configuration["JWT:Issuer"],
+                audience: _configuration["JWT:Audience"],
+                expires: DateTime.Now.AddHours(1),
                 claims: authClaims,
-                signingCredentials: new SigningCredentials(authSercet, SecurityAlgorithms.HmacSha256)
+                signingCredentials: new SigningCredentials(authSecret, SecurityAlgorithms.HmacSha256)
                 );
 
             string token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
             return token;
-        }
-
-
-        // GET: api/<AuthController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<AuthController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<AuthController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<AuthController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AuthController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }
