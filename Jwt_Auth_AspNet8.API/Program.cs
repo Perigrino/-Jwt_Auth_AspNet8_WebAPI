@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Jwt_Auth_AspNet8.API;
 using Jwt_Auth_AspNet8.Application.Data;
+using Jwt_Auth_AspNet8.Application.Model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,7 @@ builder.Services.AddSwaggerGen();
 
 // Add Identity
 builder.Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddIdentity<User, IdentityRole>() //User in this case is adding more custom fields to the Identity
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 

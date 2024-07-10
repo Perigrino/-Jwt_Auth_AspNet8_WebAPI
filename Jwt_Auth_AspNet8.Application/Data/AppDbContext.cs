@@ -1,3 +1,4 @@
+using Jwt_Auth_AspNet8.Application.Model;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -5,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Jwt_Auth_AspNet8.Application.Data;
 
-public class AppDbContext :IdentityDbContext
+public class AppDbContext :IdentityDbContext<User> //this adds the custom fields to the Db
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {

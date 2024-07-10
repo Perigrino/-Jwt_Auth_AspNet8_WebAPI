@@ -46,7 +46,7 @@ namespace Jwt_Auth_AspNet8.API.Controller
         
         [HttpGet]
         [Route("GetOwnerRole")]
-        [Authorize(Roles = StaticUserRoles.USER)]
+        [Authorize(Roles = StaticUserRoles.OWNER)]
         public IActionResult GetOwnerRole()
         {
             return Ok(Summaries);

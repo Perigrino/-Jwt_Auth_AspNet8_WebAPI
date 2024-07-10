@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Jwt_Auth_AspNet8.Application.Model;
 using Jwt_Auth_AspNet8.Contracts.OtherObjects;
 using Jwt_Auth_AspNet8.Contracts.Requests;
 using Microsoft.AspNetCore.Identity;
@@ -13,11 +14,11 @@ namespace Jwt_Auth_AspNet8.API.Controller
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -55,8 +56,10 @@ namespace Jwt_Auth_AspNet8.API.Controller
             if (isExistUser != null)
                 return BadRequest("Username already exists");
 
-            IdentityUser newUser = new IdentityUser()
+            User newUser = new User()
             {
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
                 Email = registerRequest.Email,
                 UserName = registerRequest.UserName,
                 SecurityStamp = Guid.NewGuid().ToString()
@@ -70,7 +73,6 @@ namespace Jwt_Auth_AspNet8.API.Controller
                 {
                     errorString += " # " + error.Description;
                 }
-
                 return BadRequest(errorString);
             }
             //Add a default User to all users
@@ -79,7 +81,7 @@ namespace Jwt_Auth_AspNet8.API.Controller
             return Ok("User Created");
         }
         
-        // Route -> Register
+        // Route -> Login
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login ([FromBody] LoginRequest loginRequest)
@@ -95,9 +97,11 @@ namespace Jwt_Auth_AspNet8.API.Controller
             var userRoles = await _userManager.GetRolesAsync(user);
             var authClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Name, user.UserName ?? throw new InvalidOperationException()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("JWTID", Guid.NewGuid().ToString()),
+                new Claim("FirstName", user.FirstName),
+                new Claim("LastName", user.LastName)
             };
 
             foreach (var userRole in userRoles)
@@ -119,8 +123,64 @@ namespace Jwt_Auth_AspNet8.API.Controller
                 signingCredentials: new SigningCredentials(authSecret, SecurityAlgorithms.HmacSha256)
                 );
 
-            string token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
+            var token = new JwtSecurityTokenHandler().WriteToken(tokenObject);
             return token;
+        }
+        
+        // Route -> Make User -> ADMIN
+        [HttpPost]
+        [Route("make_user_admin")]
+        public async Task<IActionResult> MakeAdmin([FromBody] UpdatePermissionRequest updatePermissionRequest)
+        {
+            var user = await _userManager.FindByNameAsync(updatePermissionRequest.UserName);
+            if (user is null)
+                return BadRequest("Username does not exist");
+
+            await _userManager.AddToRoleAsync(user, StaticUserRoles.ADMIN);
+            return Ok("User is now an Admin");
+        }
+        
+        
+        
+        // Route -> Make User -> Owner
+        [HttpPost]
+        [Route("make_user_owner")]
+        public async Task<IActionResult> MakeOwner([FromBody] UpdatePermissionRequest updatePermissionRequest)
+        {
+            var user = await _userManager.FindByNameAsync(updatePermissionRequest.UserName);
+            if (user is null)
+                return BadRequest("Username does not exist");
+
+            await _userManager.AddToRoleAsync(user, StaticUserRoles.OWNER);
+            return Ok("User is now an Owner");
+        }
+        
+        
+        // Route -> Remove Owner Role
+        [HttpPost]
+        [Route("remove_owner_role")]
+        public async Task<IActionResult> RemoveOwnerRole([FromBody] UpdatePermissionRequest updatePermissionRequest)
+        {
+            var user = await _userManager.FindByNameAsync(updatePermissionRequest.UserName);
+            if (user is null)
+                return BadRequest("Username does not exist");
+
+            await _userManager.RemoveFromRoleAsync(user, StaticUserRoles.OWNER);
+            return Ok("User is no longer an Owner");
+        }
+        
+        
+        // Route -> Remove Admin Role
+        [HttpPost]
+        [Route("remove_admin_role")]
+        public async Task<IActionResult> RemoveAdminRole([FromBody] UpdatePermissionRequest updatePermissionRequest)
+        {
+            var user = await _userManager.FindByNameAsync(updatePermissionRequest.UserName);
+            if (user is null)
+                return BadRequest("Username does not exist");
+
+            await _userManager.RemoveFromRoleAsync(user, StaticUserRoles.ADMIN);
+            return Ok("User is no longer an Admin");
         }
     }
 }
