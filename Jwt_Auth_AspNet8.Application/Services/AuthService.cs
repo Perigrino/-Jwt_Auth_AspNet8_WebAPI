@@ -34,8 +34,10 @@ public class AuthService : IAuthService
         if (adminRoleExists && userRoleExists && ownerRoleExists)
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = "Role Seeding Already Done"
+                Message = "Role Seeding Already Done",
+                Data = null
             };
             
         await _roleManager.CreateAsync(new IdentityRole(StaticUserRoles.USER));
@@ -43,8 +45,10 @@ public class AuthService : IAuthService
         await _roleManager.CreateAsync(new IdentityRole(StaticUserRoles.OWNER));
         return new AuthServiceResponseDto()
         {
+            StatusCode = 200,
             IsSucceed = true,
-            Message = "Role Seeding Done Successfully"
+            Message = "Role Seeding Done Successfully",
+            Data = null
         };
     }
 
@@ -54,8 +58,10 @@ public class AuthService : IAuthService
         if (isExistUser != null)
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = "Username already exists"
+                Message = "Username already exists",
+                Data = null
             };
         
         User newUser = new User()
@@ -77,8 +83,10 @@ public class AuthService : IAuthService
             }
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = errorString
+                Message = errorString,
+                Data = null
             };
         }
         //Add a default User to all users
@@ -86,8 +94,10 @@ public class AuthService : IAuthService
 
         return new AuthServiceResponseDto()
         {
+            StatusCode = 201,
             IsSucceed = true,
-            Message = "User Created Successfully"
+            Message = "User Created Successfully",
+            Data = null
         };
     }
     public async Task<AuthServiceResponseDto> LoginAsync(LoginDto loginDto)
@@ -96,16 +106,20 @@ public class AuthService : IAuthService
         if (user is null)
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = "Invalid Credentials"
+                Message = "Invalid Credentials",
+                Data = null
             };
 
         var isPasswordCorrect = await _userManager.CheckPasswordAsync(user,loginDto.Password);
         if (!isPasswordCorrect)
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = "Invalid Credentials"
+                Message = "Invalid Credentials",
+                Data = null
             };
 
 
@@ -126,8 +140,10 @@ public class AuthService : IAuthService
         var token = GenerateNewJsonWebToken(authClaims);
         return new AuthServiceResponseDto()
         {
+            StatusCode = 201,
             IsSucceed = true,
-            Message = token
+            Message = "User token generated successfully",
+            Data = token
         };
     }
     public async Task<AuthServiceResponseDto> MakeAdminAsync(UpdatePermissionDto updatePermissionDto)
@@ -136,14 +152,18 @@ public class AuthService : IAuthService
         if (user is null)
             return new AuthServiceResponseDto()
             {
-                IsSucceed = true,
-                Message = "Username does not exist"
+                StatusCode = 400,
+                IsSucceed = false,
+                Message = "Username does not exist",
+                Data = null
             };
         await _userManager.AddToRoleAsync(user, StaticUserRoles.ADMIN);
         return new AuthServiceResponseDto()
         {
+            StatusCode = 200,
             IsSucceed = true,
-            Message = "User is now an Admin"
+            Message = "User is now an Admin",
+            Data = null
         };
     }
     public async Task<AuthServiceResponseDto> MakeOwnerAsync(UpdatePermissionDto updatePermissionDto)
@@ -152,15 +172,19 @@ public class AuthService : IAuthService
         if (user is null)
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = "Username does not exist"
+                Message = "Username does not exist",
+                Data = null
             };
 
         await _userManager.AddToRoleAsync(user, StaticUserRoles.OWNER);
         return new AuthServiceResponseDto()
         {
+            StatusCode = 200,
             IsSucceed = true,
-            Message = "User is now an Owner"
+            Message = "User is now an Owner",
+            Data = null
         };
     }
     public async Task<AuthServiceResponseDto> RemoveAdminRoleAsync (UpdatePermissionDto updatePermissionDto)
@@ -169,15 +193,19 @@ public class AuthService : IAuthService
         if (user is null)
             return new AuthServiceResponseDto()
             {
-                IsSucceed = true,
-                Message = "Username does not exist"
+                StatusCode = 400,
+                IsSucceed = false,
+                Message = "Username does not exist",
+                Data = null
             };
 
         await _userManager.RemoveFromRoleAsync(user, StaticUserRoles.ADMIN);
         return new AuthServiceResponseDto()
         {
+            StatusCode = 200,
             IsSucceed = true,
-            Message = "User is no longer an Owner"
+            Message = "User is no longer an Admin",
+            Data = null
         };
     }
     public async Task<AuthServiceResponseDto> RemoveOwnerRoleAsync (UpdatePermissionDto updatePermissionDto)
@@ -186,15 +214,19 @@ public class AuthService : IAuthService
         if (user is null)
             return new AuthServiceResponseDto()
             {
+                StatusCode = 400,
                 IsSucceed = false,
-                Message = "Username does not exist"
+                Message = "Username does not exist",
+                Data = null
             };
 
         await _userManager.RemoveFromRoleAsync(user, StaticUserRoles.OWNER);
         return new AuthServiceResponseDto()
         {
+            StatusCode = 200,
             IsSucceed = true,
-            Message = "User is no longer an Owner"
+            Message = "User is no longer an Owner",
+            Data = null
         };
     }
 
