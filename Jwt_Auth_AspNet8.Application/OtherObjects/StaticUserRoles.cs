@@ -1,6 +1,6 @@
-namespace Jwt_Auth_AspNet8.Contracts.OtherObjects;
+namespace Jwt_Auth_AspNet8.Application.OtherObjects;
 
-public static class StaticUserRoles
+public class StaticUserRoles
 {
     public const string OWNER = "OWNER";
     public const string ADMIN = "ADMIN";

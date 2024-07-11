@@ -2,6 +2,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Jwt_Auth_AspNet8.API;
 using Jwt_Auth_AspNet8.Application.Data;
+using Jwt_Auth_AspNet8.Application.Interfaces;
+using Jwt_Auth_AspNet8.Application.Model;
+using Jwt_Auth_AspNet8.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +15,7 @@ using Newtonsoft.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApplication();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); 
 builder.Services.Configure<JsonOptions>(options => { options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });
@@ -23,7 +26,7 @@ builder.Services.AddSwaggerGen();
 
 // Add Identity
 builder.Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddIdentity<User, IdentityRole>() //User in this case is adding more custom fields to the Identity
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
@@ -41,8 +44,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     
 
 // Add Authentication and JwtBearer
-builder.Services
-    .AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -56,15 +58,14 @@ builder.Services
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidIssuer = builder.Configuration["JWT: ValidIssuer"],
-            ValidAudience = builder.Configuration["JWT: ValidAudience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"]))
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JWT:SecretKey"] ?? throw new InvalidOperationException()))
         };
     });
 
-
-// Configure the HTTP request pipeline.
-// Configure the HTTP request pipeline.
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
@@ -77,6 +78,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints => { endpoints.MapControllers();});
 
