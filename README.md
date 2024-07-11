@@ -59,7 +59,7 @@ Before you begin, ensure you have the following installed:
       "firstName": "John",
       "lastName": "Doe",
       "email" : "johnDoe@email.com"
-      "username": "newuser",
+      "username": "JD",
       "password": "password123",
       "securityStamp": "b2d5e1c2-1b9a-4bfa-a1a2-9c8b0e2fabb5"
   }
@@ -71,12 +71,107 @@ Before you begin, ensure you have the following installed:
 
   ```json
   {
-      "username": "newuser",
+      "username": "JD",
       "password": "password123"
   }
   ```
+  The response will contain a JWT token and will look something like this 
+   ```json
+  {
+      "statusCode": 201,
+      "isSucceed": true,
+      "message": "User token generated successfully",
+      "data": "JWT token"
+  }
+  ```
 
-  The response will contain a JWT token.
+- **Make User an ADMIN**
+
+  Send a `POST` request to `/api/auth/make_user_admin` with the following JSON payload:
+
+  ```json
+  {
+      "username": "JD"
+  }
+  ```
+
+    Your response should look something like this:
+
+    ```json
+    {
+        "statusCode": 201,
+        "isSucceed": true,
+        "message": "User is now an Admin",
+        "data": "null"
+    }
+    ```
+
+
+- **Make User an OWNER**
+
+  Send a `POST` request to `/api/auth/make_user_owner` with the following JSON payload:
+
+  ```json
+  {
+      "username": "JD"
+  }
+  ```
+
+  Your response should look something like this:
+
+    ```json
+    {
+        "statusCode": 201,
+        "isSucceed": true,
+        "message": "User is now an Owner",
+        "data": "null"
+    }
+    ```
+
+
+- **Remove Admin Role From User**
+
+  Send a `POST` request to `/api/auth/remove_admin_role` with the following JSON payload:
+
+  ```json
+  {
+      "username": "JD"
+  }
+  ```
+
+  Your response should look something like this:
+
+    ```json
+    {
+        "statusCode": 200,
+        "IsSucceed": true,
+        "Message": "User is no longer an Admin",
+        "data": "null"
+    }
+    ```
+
+
+
+- **Remove Owner Role From User**
+
+  Send a `POST` request to `/api/auth/remove_owner_role` with the following JSON payload:
+
+  ```json
+  {
+      "username": "user"
+  }
+  ```
+
+  Your response should look something like this:
+
+    ```json
+    {
+        "statusCode": 200,
+        "IsSucceed": true,
+        "Message": "User is no longer an Owner",
+        "data": "null"
+    }
+    ```
 
 - **Access Protected Endpoints**
 
