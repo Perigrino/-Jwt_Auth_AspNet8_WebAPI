@@ -99,7 +99,7 @@ Before you begin, ensure you have the following installed:
 
     ```json
     {
-        "statusCode": 201,
+        "statusCode": 200,
         "isSucceed": true,
         "message": "User is now an Admin",
         "data": "null"
@@ -121,7 +121,7 @@ Before you begin, ensure you have the following installed:
 
     ```json
     {
-        "statusCode": 201,
+        "statusCode": 200,
         "isSucceed": true,
         "message": "User is now an Owner",
         "data": "null"
