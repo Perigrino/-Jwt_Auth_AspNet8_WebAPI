@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Jwt_Auth_AspNet8.Application.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240710001124_Added_User_Model")]
+    [Migration("20240711111310_Added_User_Model")]
     partial class Added_User_Model
     {
         /// <inheritdoc />

@@ -27,7 +27,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Jwt_Auth_AspNet8.Application\Jwt_Auth_AspNet8.Application.csproj" />
-      <ProjectReference Include="..\Jwt_Auth_AspNet8.Contracts\Jwt_Auth_AspNet8.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>

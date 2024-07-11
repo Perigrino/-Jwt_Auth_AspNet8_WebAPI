@@ -2,7 +2,9 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Jwt_Auth_AspNet8.API;
 using Jwt_Auth_AspNet8.Application.Data;
+using Jwt_Auth_AspNet8.Application.Interfaces;
 using Jwt_Auth_AspNet8.Application.Model;
+using Jwt_Auth_AspNet8.Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +15,7 @@ using Newtonsoft.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApplication();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore); 
 builder.Services.Configure<JsonOptions>(options => { options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; });

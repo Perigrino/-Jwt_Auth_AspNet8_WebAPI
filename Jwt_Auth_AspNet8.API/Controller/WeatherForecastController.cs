@@ -1,4 +1,4 @@
-using Jwt_Auth_AspNet8.Contracts.OtherObjects;
+using Jwt_Auth_AspNet8.Application.OtherObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

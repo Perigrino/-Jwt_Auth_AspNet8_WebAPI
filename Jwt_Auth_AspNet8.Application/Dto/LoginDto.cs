@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Jwt_Auth_AspNet8.Contracts.Requests;
+namespace Jwt_Auth_AspNet8.Application.Dto;
 
-public class LoginRequest
+public class LoginDto
 {
     [Required (ErrorMessage = "Username is required")]
     public required string UserName { get; set; }
